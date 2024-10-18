@@ -120,21 +120,26 @@ public with sharing class DummyJSONCallout {
      * 
      * @param contactId The Salesforce Contact ID used to generate the JSON payload for the external system.
      */
-	
+	@future(callout=true)
 	public static void postCreateDummyJSONUser(String contactId) {
 		// Create HTTP request to send.
-		Http http = new Http();		
+				
 		HttpRequest request = new HttpRequest();
 		// Set the endpoint URL. Use direct URL or for best practices use Named Credential.
 		request.setEndpoint('callout:DummyJsonUser' + '/add');
 		// Set the HTTP method to POST.
 		request.setMethod('POST');
 		// Set the body using generateDummyJsonUserPayload method.
-
+		request.setBody(generateDummyJsonUserPayload(contactId));
 		// Send the HTTP request and get the response.
+		Http http = new Http();
+		HttpResponse response = http.send(request);
 
 		// If the HTTP response code is successful, update the contact.
-		//if(response.getStatusCode>= 200 || response.getStatusCode <= 299){
+		if(response.getStatusCode()>= 200 || response.getStatusCode() <= 299){
+			Contact cont = [SELECT Id, DummyJSON_Last_Updated__c FROM Contact WHERE Id = :contactId];
+			cont.DummyJSON_Last_Updated__c = Datetime.now();
+			update cont;
 
 		}
 	}

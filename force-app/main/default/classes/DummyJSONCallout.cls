@@ -134,7 +134,9 @@ public with sharing class DummyJSONCallout {
 		// Send the HTTP request and get the response.
 
 		// If the HTTP response code is successful, update the contact.
-		if(response.getStatusCode)
+		//if(response.getStatusCode>= 200 || response.getStatusCode <= 299){
+
+		}
 	}
 
 	/*
@@ -155,17 +157,24 @@ public with sharing class DummyJSONCallout {
 	@TestVisible // Allows test class to see this method. Since it is private, it would not be visible otherwise.
 	private static String generateDummyJsonUserPayload(String contactId) {
 		// Query the contact to get the field values to generate the JSON payload.
-		Contact cont = new Contact([SELECT Id, FirstName, LastName, Email, Phone 
-									FROM Contact WHERE Id = :contactId]);
+		Contact cont = [SELECT Id, FirstName, LastName, Email, Phone 
+									FROM Contact WHERE Id = :contactId];
 		// Create a map of the field values.
-		Map<String, Object> jsonMap = new Map<String, Object>(
-			
-		);
-
-		// Serialize the map into a JSON string.
+		Map<String, Object> jsonMap = new Map<String, Object>{
+			'firstName' => cont.FirstName,
+			'lastName' => cont.LastName,
+			'email' => cont.Email,
+			'phone' => cont.Phone,
+			'salesforceId' => cont.id};
 		// Make sure to check that required contacts fields have a value. Default the value to unknown if it does not exists.
+		if (cont.LastName == null){
+			jsonMap.put('lastName', 'Unknown');
+		}
+		// Serialize the map into a JSON string.
+		String jsonPayload = JSON.serialize(jsonMap);
+		
 		// Integration data can change over time. It is a best practice to add safeguards/validation to ensure the integration does not break.
 
-		return null;
+		return jsonPayload;
 	}
 }

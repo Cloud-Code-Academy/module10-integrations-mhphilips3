@@ -19,7 +19,12 @@
 trigger ContactTrigger on Contact(before insert) {
 	// When a contact is inserted
 	// if DummyJSON_Id__c is null, generate a random number between 0 and 100 and set this as the contact's DummyJSON_Id__c value
-
+	for (Contact cont : Trigger.new){
+		if (cont.DummyJSON_Id__c == null){
+			Integer randomNumber = (Integer)(Math.random() * (100-50+1));
+			cont.DummyJSON_Id__c = String.valueOf(randomNumber);
+		}
+	}
 	//When a contact is inserted
 	// if DummyJSON_Id__c is less than or equal to 100, call the getDummyJSONUserFromId API
 

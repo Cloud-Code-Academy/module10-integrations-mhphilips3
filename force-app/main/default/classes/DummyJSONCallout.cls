@@ -136,7 +136,7 @@ public with sharing class DummyJSONCallout {
 		HttpResponse response = http.send(request);
 
 		// If the HTTP response code is successful, update the contact.
-		if(response.getStatusCode()>= 200 || response.getStatusCode() <= 299){
+		if(response.getStatusCode()>= 200 && response.getStatusCode() <= 299){
 			Contact cont = [SELECT Id, DummyJSON_Last_Updated__c FROM Contact WHERE Id = :contactId];
 			cont.DummyJSON_Last_Updated__c = Datetime.now();
 			update cont;
